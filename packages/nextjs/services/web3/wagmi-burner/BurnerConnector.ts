@@ -51,6 +51,7 @@ export class BurnerConnector extends Connector<StaticJsonRpcProvider, BurnerConn
   }
 
   async connect(config?: { chainId?: number | undefined } | undefined): Promise<Required<BurnerConnectorData>> {
+    console.log("The connect was clalled !!!");
     const chain = this.getChainFromId(config?.chainId);
 
     this.provider = new StaticJsonRpcProvider(chain.rpcUrls.default.http[0]);
