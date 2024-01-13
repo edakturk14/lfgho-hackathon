@@ -38,7 +38,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
 };
 
 const ScaffoldEthAppWithProviders = (props: AppProps) => {
-  // This variable is required for initial client side rendering of correct theme for RainbowKit
+  // This variable is required for initial client side rendering of correct theme for ConnectKit
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const { isDarkMode } = useDarkMode();
   useEffect(() => {
