@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { NetworkOptions } from "./NetworkOptions";
+import { Avatar } from "connectkit";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { Address, useDisconnect } from "wagmi";
 import {
@@ -11,7 +12,6 @@ import {
   DocumentDuplicateIcon,
   QrCodeIcon,
 } from "@heroicons/react/24/outline";
-import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import { getTargetNetworks } from "~~/utils/scaffold-eth";
 
@@ -20,16 +20,10 @@ const allowedNetworks = getTargetNetworks();
 type AddressInfoDropdownProps = {
   address: Address;
   blockExplorerAddressLink: string | undefined;
-  displayName: string;
-  ensAvatar?: string;
+  displayName?: string;
 };
 
-export const AddressInfoDropdown = ({
-  address,
-  ensAvatar,
-  displayName,
-  blockExplorerAddressLink,
-}: AddressInfoDropdownProps) => {
+export const AddressInfoDropdown = ({ address, displayName, blockExplorerAddressLink }: AddressInfoDropdownProps) => {
   const { disconnect } = useDisconnect();
 
   const [addressCopied, setAddressCopied] = useState(false);
@@ -46,7 +40,7 @@ export const AddressInfoDropdown = ({
     <>
       <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
         <summary tabIndex={0} className="btn btn-secondary btn-sm pl-0 pr-2 shadow-md dropdown-toggle gap-0 !h-auto">
-          <BlockieAvatar address={address} size={30} ensImage={ensAvatar} />
+          <Avatar size={30} address={address as `0x{String}`} />
           <span className="ml-2 mr-1">{displayName}</span>
           <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
         </summary>
