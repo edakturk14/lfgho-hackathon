@@ -47,17 +47,42 @@ contract GhoFundStreams {
 		return (builderStream.GHOcap * (block.timestamp - builderStream.last)) / frequency;
 	}
 
+	function streamWithdraw(uint256 _GHOamount, string memory _reason) public {
+		// ToDo. Check that we have enough GHO?
+		BuilderStreamInfo storage builderStream = streamedBuilders[msg.sender];
+		require(builderStream.GHOcap > 0, "No active stream for builder");
+
+		uint256 totalAmountCanWithdraw = unlockedBuilderAmount(msg.sender);
+		require(totalAmountCanWithdraw >= _GHOamount,"Not enough unlocked GHO in the stream");
+
+		uint256 cappedLast = block.timestamp - frequency;
+		if (builderStream.last < cappedLast){
+			builderStream.last = cappedLast;
+		}
+
+		builderStream.last = builderStream.last + ((block.timestamp - builderStream.last) * _GHOamount / totalAmountCanWithdraw);
+
+		// ToDo. Transfer GHO to builder.
+
+		emit Withdraw(msg.sender, _GHOamount, _reason);
+	}
+
+	// ToDo. Add access control.
 	function addBuilderStream(address payable _builder, uint256 _GHOcap) public {
 		streamedBuilders[_builder] = BuilderStreamInfo(_GHOcap, block.timestamp - frequency);
 		emit AddBuilder(_builder, _GHOcap);
 	}
 
+	// ToDo. Add access control.
 	function addBuilderStreamBatch(address[] memory _builders, uint256[] memory _GHOcaps) public {
 		require(_builders.length == _GHOcaps.length, "Lengths are not equal");
 		for (uint256 i = 0; i < _builders.length; i++) {
-			addBuilderStream(payable(_builders[i]), _caps[i]);
+			addBuilderStream(payable(_builders[i]), _GHOcaps[i]);
 		}
 	}
+
+	// ToDo. Add access control.
+	function borrowGHO(uint256 _GHOamount) public {}
 
 	/**
 	 * Function that allows the contract to receive ETH
