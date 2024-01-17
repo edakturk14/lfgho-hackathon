@@ -40,7 +40,7 @@ export const ConnectKitCustomConnectButton = () => {
               return (
                 <>
                   <div className="flex flex-col items-center mr-1">
-                    <Balance address={address as Address} className="min-h-0 h-auto" />
+                    <Balance address={address as Address} className="min-h-0 h-auto text-black" />
                     <span className="text-xs" style={{ color: networkColor }}>
                       {chain.name}
                     </span>

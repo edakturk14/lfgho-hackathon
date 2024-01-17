@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { AppProps } from "next/app";
 import { ConnectKitProvider } from "connectkit";
 import NextNProgress from "nextjs-progressbar";
 import { Toaster } from "react-hot-toast";
-import { useDarkMode } from "usehooks-ts";
 import { WagmiConfig } from "wagmi";
 import { Footer } from "~~/components/Footer";
 import { Header } from "~~/components/Header";
@@ -38,13 +37,6 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
 };
 
 const ScaffoldEthAppWithProviders = (props: AppProps) => {
-  // This variable is required for initial client side rendering of correct theme for ConnectKit
-  const [isDarkTheme, setIsDarkTheme] = useState(true);
-  const { isDarkMode } = useDarkMode();
-  useEffect(() => {
-    setIsDarkTheme(isDarkMode);
-  }, [isDarkMode]);
-
   return (
     <WagmiConfig config={wagmiConfig}>
       <NextNProgress />
@@ -52,7 +44,7 @@ const ScaffoldEthAppWithProviders = (props: AppProps) => {
         options={{
           customAvatar: BlockieAvatar,
         }}
-        mode={isDarkTheme ? "dark" : "light"}
+        mode="light"
       >
         <ScaffoldEthApp {...props} />
       </ConnectKitProvider>
