@@ -41,7 +41,7 @@ const ghoService = new GhoService({
   uiGhoDataProviderAddress: markets.AaveV3Sepolia.UI_GHO_DATA_PROVIDER, // Sepolia GHO Market
 });
 
-export async function fetchContractData() {
+export async function fetchAaveDetails() {
   // Object containing array of pool reserves and market base currency data
   // { reservesArray, baseCurrencyData }
   const reserves = await poolDataProviderContract.getReservesHumanized({
@@ -119,4 +119,7 @@ export async function fetchContractData() {
     formattedPoolReserves,
     formattedUserSummary,
   });
+  return { formattedUserSummary, formattedGhoUserData };
 }
+
+export type AaveData = Awaited<ReturnType<typeof fetchAaveDetails>>;
