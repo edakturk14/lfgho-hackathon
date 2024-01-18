@@ -1,12 +1,18 @@
+import { useEffect } from "react";
 import type { NextPage } from "next";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import BuildersInfo from "~~/components/BuildersInfo";
 import { MetaHeader } from "~~/components/MetaHeader";
 import { Address, Balance } from "~~/components/scaffold-eth";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
+import { fetchContractData } from "~~/utils/aave";
 
 const Home: NextPage = () => {
   const { data: streamContract } = useDeployedContractInfo("SandGardenStreams");
+
+  useEffect(() => {
+    fetchContractData();
+  }, []);
 
   return (
     <>
