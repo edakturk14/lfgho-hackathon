@@ -6,6 +6,7 @@ import {
   formatUserSummaryAndIncentives,
   formatUserSummaryWithDiscount,
 } from "@aave/math-utils";
+import * as markets from "@bgd-labs/aave-address-book";
 import dayjs from "dayjs";
 import { ethers } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
@@ -13,55 +14,55 @@ import { formatUnits } from "ethers/lib/utils";
 const USD_DECIMALS = 6;
 
 // Sample RPC address for querying ETH goerli
-const provider = new ethers.providers.JsonRpcProvider("https://eth-goerli.public.blastapi.io");
+const provider = new ethers.providers.JsonRpcProvider("https://eth-sepolia.public.blastapi.io");
 
 // User address to fetch data for, insert address here
-const currentAccount = "0x464C71f6c2F760DdA6093dCB91C24c39e5d6e18c";
+const currentAccount = "0x55b9CB0bCf56057010b9c471e7D42d60e1111EEa";
 
 // View contract used to fetch all reserves data (including market base currency data), and user reserves
 // Using Aave V3 Eth goerli address for demo
 const poolDataProviderContract = new UiPoolDataProvider({
-  uiPoolDataProviderAddress: "0x3De59b6901e7Ad0A19621D49C5b52cC9a4977e52", // Goerli GHO Market
+  uiPoolDataProviderAddress: markets.AaveV3Sepolia.UI_POOL_DATA_PROVIDER, // Sepolia GHO Market
   provider,
-  chainId: ChainId.goerli,
+  chainId: ChainId.sepolia,
 });
 const currentTimestamp = dayjs().unix();
 
 // View contract used to fetch all reserve incentives (APRs), and user incentives
 // Using Aave V3 Eth goerli address for demo
 const incentiveDataProviderContract = new UiIncentiveDataProvider({
-  uiIncentiveDataProviderAddress: "0xF67B25977cEFf3563BF7F24A531D6CEAe6870a9d", // Goerli GHO Market
+  uiIncentiveDataProviderAddress: markets.AaveV3Sepolia.UI_INCENTIVE_DATA_PROVIDER, // Sepolia GHO Market
   provider,
-  chainId: ChainId.goerli,
+  chainId: ChainId.sepolia,
 });
 
 const ghoService = new GhoService({
   provider,
-  uiGhoDataProviderAddress: "0xE914D574975a1Cd273388035Db4413dda788c0E5", // Goerli GHO Market
+  uiGhoDataProviderAddress: markets.AaveV3Sepolia.UI_GHO_DATA_PROVIDER, // Sepolia GHO Market
 });
 
 export async function fetchContractData() {
   // Object containing array of pool reserves and market base currency data
   // { reservesArray, baseCurrencyData }
   const reserves = await poolDataProviderContract.getReservesHumanized({
-    lendingPoolAddressProvider: "0x4dd5ab8Fb385F2e12aDe435ba7AFA812F1d364D0", // Goerli GHO Market
+    lendingPoolAddressProvider: markets.AaveV3Sepolia.POOL_ADDRESSES_PROVIDER, // Goerli GHO Market
   });
 
   // Object containing array or users aave positions and active eMode category
   // { userReserves, userEmodeCategoryId }
   const userReserves = await poolDataProviderContract.getUserReservesHumanized({
-    lendingPoolAddressProvider: "0x4dd5ab8Fb385F2e12aDe435ba7AFA812F1d364D0", // Goerli GHO Market
+    lendingPoolAddressProvider: markets.AaveV3Sepolia.POOL_ADDRESSES_PROVIDER, // Goerli GHO Market
     user: currentAccount,
   });
 
   // Array of incentive tokens with price feed and emission APR
   const reserveIncentives = await incentiveDataProviderContract.getReservesIncentivesDataHumanized({
-    lendingPoolAddressProvider: "0x4dd5ab8Fb385F2e12aDe435ba7AFA812F1d364D0", // Goerli GHO Market
+    lendingPoolAddressProvider: markets.AaveV3Sepolia.POOL_ADDRESSES_PROVIDER, // Goerli GHO Market
   });
 
   // Dictionary of claimable user incentives
   const userIncentives = await incentiveDataProviderContract.getUserReservesIncentivesDataHumanized({
-    lendingPoolAddressProvider: "0x4dd5ab8Fb385F2e12aDe435ba7AFA812F1d364D0", // Goerli GHO Market
+    lendingPoolAddressProvider: markets.AaveV3Sepolia.POOL_ADDRESSES_PROVIDER, // Goerli GHO Market
     user: currentAccount,
   });
 

@@ -1470,6 +1470,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bgd-labs/aave-address-book@npm:^2.16.0":
+  version: 2.16.0
+  resolution: "@bgd-labs/aave-address-book@npm:2.16.0"
+  checksum: 9feaa380ab33ae8e4473ef2744e896b80bf96f19c427d52b091f7fdd5da326ec9b1cdf87b7a2dcafb541f0389b4c1d1905712ea9536c7d17d26827b512a5f9d4
+  languageName: node
+  linkType: hard
+
 "@chainsafe/as-sha256@npm:^0.3.1":
   version: 0.3.1
   resolution: "@chainsafe/as-sha256@npm:0.3.1"
@@ -3975,6 +3982,7 @@ __metadata:
   dependencies:
     "@aave/contract-helpers": ^1.21.1
     "@aave/math-utils": ^1.21.1
+    "@bgd-labs/aave-address-book": ^2.16.0
     "@ethersproject/providers": ~5.7.2
     "@heroicons/react": ~2.0.11
     "@trivago/prettier-plugin-sort-imports": ~4.1.1
