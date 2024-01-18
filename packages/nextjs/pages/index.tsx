@@ -1,60 +1,45 @@
-import Link from "next/link";
 import type { NextPage } from "next";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import BuildersInfo from "~~/components/BuildersInfo";
 import { MetaHeader } from "~~/components/MetaHeader";
+import { Address, Balance } from "~~/components/scaffold-eth";
+import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 
 const Home: NextPage = () => {
+  const { data: streamContract } = useDeployedContractInfo("SandGardenStreams");
+
   return (
     <>
       <MetaHeader />
-      <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center mb-8">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
-          </h1>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/pages/index.tsx
-            </code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              YourContract.sol
-            </code>{" "}
-            in{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/hardhat/contracts
-            </code>
-          </p>
+      <div className="flex flex-col flex-grow p-4 space-y-4">
+        {/* Welcome*/}
+        <div>
+          <h1 className="text-3xl text-primary font-bold underline underline-offset-8">Welcome to DAO !</h1>
         </div>
-
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-lg">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contract
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-lg">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
+        {/* DAO Contract details */}
+        <div className="flex flex-col shadow-center shadow-secondary  rounded-lg p-3 border-4 border-secondary">
+          <h1 className="text-2xl text-primary font-bold">Details</h1>
+          <div className="flex flex-col">
+            <p className="font-bold m-0 text-secondary">
+              Stream Contract
+              <span
+                className="tooltip text-white font-normal"
+                data-tip="All streams and contributions are handled by a contract on Optimism"
+              >
+                <QuestionMarkCircleIcon className="h-5 w-5 inline-block ml-2" />
+              </span>
+            </p>
+            <div className="flex gap-1 items-center">
+              <div className="flex flex-col items-center">
+                <Address address={streamContract?.address} />
+              </div>{" "}
+              /
+              <Balance address={streamContract?.address} className="text-lg" />
             </div>
           </div>
         </div>
+        {/* Builders */}
+        <BuildersInfo />
       </div>
     </>
   );
