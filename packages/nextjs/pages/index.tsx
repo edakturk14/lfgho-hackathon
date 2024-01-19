@@ -1,61 +1,253 @@
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import type { NextPage } from "next";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { parseEther } from "viem";
+import { useAccount } from "wagmi";
+import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import BuildersInfo from "~~/components/BuildersInfo";
 import { MetaHeader } from "~~/components/MetaHeader";
+import { Address, Balance, EtherInput, InputBase } from "~~/components/scaffold-eth";
+import { useDeployedContractInfo, useScaffoldContractWrite, useTransactor } from "~~/hooks/scaffold-eth";
+import { AaveData, fetchAaveDetails } from "~~/utils/aave";
+import { notification } from "~~/utils/scaffold-eth";
 
 const Home: NextPage = () => {
+  const [reason, setReason] = useState("");
+  const [amount, setAmount] = useState("");
+  const { data: streamContract } = useDeployedContractInfo("GhoFundStreams");
+  const [aaveDetails, setAaveDetails] = useState<AaveData | undefined>();
+  const [aaveDetailsLoading, setAaveDetailsLoading] = useState(true);
+  const { address: connectedAddress } = useAccount();
+
+  const { writeAsync: doWithdraw } = useScaffoldContractWrite({
+    contractName: "GhoFundStreams",
+    functionName: "streamWithdraw",
+    args: [parseEther(amount || "0"), reason],
+  });
+
+  const donateTxn = useTransactor();
+
+  useEffect(() => {
+    const getAaveDetails = async () => {
+      if (!streamContract?.address) return;
+      setAaveDetailsLoading(true);
+      try {
+        const data = await fetchAaveDetails(streamContract?.address);
+        setAaveDetails(data);
+      } catch (e) {
+        console.log("Error getting aave details", e);
+        notification.error("Error fetching aave details");
+      } finally {
+        setAaveDetailsLoading(false);
+      }
+    };
+
+    getAaveDetails();
+  }, [streamContract?.address]);
+
   return (
     <>
       <MetaHeader />
-      <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center mb-8">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
-          </h1>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/pages/index.tsx
-            </code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              YourContract.sol
-            </code>{" "}
-            in{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/hardhat/contracts
-            </code>
-          </p>
+      <div className="flex flex-col flex-grow p-4 space-y-4">
+        {/* Welcome*/}
+        <div>
+          <h1 className="text-3xl text-primary font-bold underline underline-offset-8">Welcome to DAO !</h1>
         </div>
-
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contract
-                </Link>{" "}
-                tab.
+        {/* DAO Contract details */}
+        <div className="flex space-x-3">
+          {/* DAO Contract details */}
+          <div className="flex flex-col shadow-center shadow-secondary  rounded-lg p-3 border-4 border-secondary">
+            <h1 className="text-xl text-primary font-bold">Details</h1>
+            <div className="flex flex-col">
+              <p className="font-bold m-0 text-secondary">
+                Stream Contract
+                <span
+                  className="tooltip text-secondary font-normal"
+                  data-tip="All streams and contributions are handled by a contract on Optimism"
+                >
+                  <QuestionMarkCircleIcon className="h-5 w-5 inline-block ml-2" />
+                </span>
               </p>
+              <div className="flex gap-1 items-center">
+                <div className="flex flex-col items-center">
+                  <Address address={streamContract?.address} />
+                </div>{" "}
+                /
+                <Balance address={streamContract?.address} className="text-lg" />
+              </div>
             </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
+          </div>
+
+          {/* Status */}
+          <div className="flex flex-col shadow-center shadow-secondary  rounded-lg p-3 border-4 border-secondary">
+            <h1 className="text-xl text-primary font-bold">Status</h1>
+            <div className="flex flex-row space-x-3">
+              <div className="flex flex-col">
+                <p className="font-bold m-0 text-secondary">
+                  Health Factor
+                  <span
+                    className="tooltip text-secondary font-normal"
+                    data-tip="Your health factor and loan to value determine the assurance of your collateral. To avoid liquidations you can supply more collateral or repay borrow positions."
+                  >
+                    <QuestionMarkCircleIcon className="h-5 w-5 inline-block ml-2" />
+                  </span>
+                </p>
+                {aaveDetails && !aaveDetailsLoading ? (
+                  <div className="flex gap-1 items-center">
+                    {parseFloat(aaveDetails.formattedUserSummary.healthFactor).toFixed(2)}%
+                  </div>
+                ) : null}
+              </div>
+              <div className="flex flex-col">
+                <p className="font-bold m-0 text-secondary">
+                  LTV
+                  <span
+                    className="tooltip text-secondary font-normal"
+                    data-tip="Your health factor and loan to value determine the assurance of your collateral. To avoid liquidations you can supply more collateral or repay borrow positions."
+                  >
+                    <QuestionMarkCircleIcon className="h-5 w-5 inline-block ml-2" />
+                  </span>
+                </p>
+                {aaveDetails && !aaveDetailsLoading ? (
+                  <div className="flex gap-1 items-center">
+                    {parseFloat(aaveDetails.formattedUserSummary.currentLoanToValue).toFixed(2)}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </div>
+
+          {/* Collateral */}
+          <div className="flex flex-col shadow-center shadow-secondary  rounded-lg p-3 border-4 border-secondary">
+            <h1 className="text-xl text-primary font-bold">Collateral</h1>
+            <div className="flex flex-col">
+              <p className="font-bold m-0 text-secondary">
+                Total Collateral in USD
+                <span
+                  className="tooltip text-secondary font-normal"
+                  data-tip="Your staked collateral is used to secure your borrow positions."
+                >
+                  <QuestionMarkCircleIcon className="h-5 w-5 inline-block ml-2" />
+                </span>
               </p>
+              {aaveDetails && !aaveDetailsLoading ? (
+                <div className="flex gap-1 items-center">
+                  $ {parseFloat(aaveDetails.formattedUserSummary.totalCollateralUSD).toFixed(2)}
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          {/* Borrowed GHO */}
+          <div className="flex flex-col shadow-center shadow-secondary  rounded-lg p-3 border-4 border-secondary">
+            <h1 className="text-xl text-primary font-bold">Borrowed GHO</h1>
+            <div className="flex flex-col">
+              <p className="font-bold m-0 text-secondary">
+                Total Borrowed GHO
+                <span className="tooltip text-secondary font-normal" data-tip="Total GHO tokens borrowed.">
+                  <QuestionMarkCircleIcon className="h-5 w-5 inline-block ml-2" />
+                </span>
+              </p>
+              {aaveDetails && !aaveDetailsLoading ? (
+                <div className="flex gap-1 items-center">
+                  $ {aaveDetails.formattedGhoUserData.userGhoBorrowBalance.toFixed(2)}
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-col shadow-center shadow-secondary  rounded-lg p-3 border-4 border-secondary">
+            <h1 className="text-xl text-primary font-bold">Actions</h1>
+            <div className="flex flex-row space-x-5">
+              <div className="flex flex-col space-y-1">
+                <p className="font-bold m-0 text-secondary">
+                  Donate
+                  <span
+                    className="tooltip text-secondary font-normal"
+                    data-tip="Supplied donation will be used as collateral and helps you earn DAO tokens which can be reddemed"
+                  >
+                    <QuestionMarkCircleIcon className="h-5 w-5 inline-block ml-2" />
+                  </span>
+                </p>
+                <label htmlFor="donate-modal" className="btn btn-primary btn-sm">
+                  <span>Donate</span>
+                </label>
+              </div>
+              <div className="flex flex-col space-y-1">
+                <p className="font-bold m-0 text-secondary">
+                  Withdraw
+                  <span
+                    className="tooltip text-secondary font-normal"
+                    data-tip="Withdraw GHO tokens by adding your contributions"
+                  >
+                    <QuestionMarkCircleIcon className="h-5 w-5 inline-block ml-2" />
+                  </span>
+                </p>
+                <label htmlFor="withdraw-modal" className="btn btn-primary btn-sm">
+                  <span>Withdraw</span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
+        {/* Builders */}
+        <BuildersInfo />
       </div>
+
+      {/* Withdraw Modal */}
+      <input type="checkbox" id="withdraw-modal" className="modal-toggle" />
+      <label htmlFor="withdraw-modal" className="modal cursor-pointer">
+        <label className="modal-box relative bg-base-300 shadow shadow-primary">
+          {/* dummy input to capture event onclick on modal box */}
+          <input className="h-0 w-0 absolute top-0 left-0" />
+          <h3 className="text-xl font-bold mb-8 text-gray-500">Withdraw from your stream</h3>
+          <label htmlFor="withdraw-modal" className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3">
+            ✕
+          </label>
+          <div className="space-y-3">
+            <div className="flex flex-col gap-6">
+              <InputBase value={reason} placeholder="Reason for withdrawal" onChange={value => setReason(value)} />
+              <EtherInput value={amount} onChange={value => setAmount(value)} />
+              <button className="btn btn-primary btn-md" onClick={() => doWithdraw()}>
+                Withdraw
+              </button>
+            </div>
+          </div>
+        </label>
+      </label>
+
+      {/* Donate Modal */}
+      <input type="checkbox" id="donate-modal" className="modal-toggle" />
+      <label htmlFor="donate-modal" className="modal cursor-pointer">
+        <label className="modal-box relative bg-base-300 shadow shadow-primary">
+          {/* dummy input to capture event onclick on modal box */}
+          <input className="h-0 w-0 absolute top-0 left-0" />
+          <h3 className="text-xl font-bold mb-8 text-gray-500">Donate</h3>
+          <label htmlFor="donate-modal" className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3">
+            ✕
+          </label>
+          <div className="space-y-3">
+            <div className="flex flex-col gap-6">
+              <EtherInput value={amount} onChange={value => setAmount(value)} placeholder="Donation amount" />
+              <button
+                className="btn btn-primary btn-md"
+                onClick={async () => {
+                  if (connectedAddress && streamContract?.address) {
+                    await donateTxn({
+                      to: streamContract?.address,
+                      value: parseEther(amount),
+                      account: connectedAddress,
+                      chain: undefined,
+                    });
+                  }
+                }}
+              >
+                Donate
+              </button>
+            </div>
+          </div>
+        </label>
+      </label>
     </>
   );
 };

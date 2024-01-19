@@ -12,6 +12,46 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aave/contract-helpers@npm:^1.21.1":
+  version: 1.21.1
+  resolution: "@aave/contract-helpers@npm:1.21.1"
+  dependencies:
+    isomorphic-unfetch: ^3.1.0
+  peerDependencies:
+    bignumber.js: ^9.x
+    ethers: ^5.x
+    reflect-metadata: ^0.1.x
+    tslib: ^2.4.x
+  checksum: 08c9ba9b3833ded92846c3266e38b94da42c947afd7253234194360d279f4375dd461b1d67de6b435313826b2902eefcc85a98af6ff092402eca81d0637dbdd5
+  languageName: node
+  linkType: hard
+
+"@aave/core-v3@npm:1.19.0, @aave/core-v3@npm:^1.18.0":
+  version: 1.19.0
+  resolution: "@aave/core-v3@npm:1.19.0"
+  checksum: 42470788f81e85945c4722d6578add6d4ba0070faabb322e1d2db038c2bf637177feefe86af9bb4b9691d39e4027c76845ad836bd06bc16b221cb16e2e768ffe
+  languageName: node
+  linkType: hard
+
+"@aave/math-utils@npm:^1.21.1":
+  version: 1.21.1
+  resolution: "@aave/math-utils@npm:1.21.1"
+  peerDependencies:
+    bignumber.js: ^9.x
+    tslib: ^2.4.x
+  checksum: 3372b09b0c947db1a80359d52c4027ce8950f3f474f5a18a93254a6f2bf00430e3d318ce08f80b661e36e48ace49116affa481071f9c84d0dfc8fee4aebd2c48
+  languageName: node
+  linkType: hard
+
+"@aave/periphery-v3@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "@aave/periphery-v3@npm:2.5.0"
+  dependencies:
+    "@aave/core-v3": 1.19.0
+  checksum: 4af7a07181097e5fdbda9e1012b8e81c868e447b2050418cd051edcac324db6d0033200bcb5e4d6031bc818613ccf9f2e758fb9e97c94a283d1fbec51ba8404e
+  languageName: node
+  linkType: hard
+
 "@adraffy/ens-normalize@npm:1.10.0":
   version: 1.10.0
   resolution: "@adraffy/ens-normalize@npm:1.10.0"
@@ -1443,6 +1483,13 @@ __metadata:
   version: 1.0.2
   resolution: "@balena/dockerignore@npm:1.0.2"
   checksum: 0d39f8fbcfd1a983a44bced54508471ab81aaaa40e2c62b46a9f97eac9d6b265790799f16919216db486331dedaacdde6ecbd6b7abe285d39bc50de111991699
+  languageName: node
+  linkType: hard
+
+"@bgd-labs/aave-address-book@npm:^2.16.0":
+  version: 2.16.0
+  resolution: "@bgd-labs/aave-address-book@npm:2.16.0"
+  checksum: 9feaa380ab33ae8e4473ef2744e896b80bf96f19c427d52b091f7fdd5da326ec9b1cdf87b7a2dcafb541f0389b4c1d1905712ea9536c7d17d26827b512a5f9d4
   languageName: node
   linkType: hard
 
@@ -3908,6 +3955,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@se-2/hardhat@workspace:packages/hardhat"
   dependencies:
+    "@aave/core-v3": ^1.18.0
+    "@aave/periphery-v3": ^2.5.0
     "@ethersproject/abi": ~5.7.0
     "@ethersproject/providers": ~5.7.1
     "@matterlabs/hardhat-zksync-solc": ~0.3.17
@@ -3949,6 +3998,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@se-2/nextjs@workspace:packages/nextjs"
   dependencies:
+    "@aave/contract-helpers": ^1.21.1
+    "@aave/math-utils": ^1.21.1
+    "@bgd-labs/aave-address-book": ^2.16.0
     "@ethersproject/providers": ~5.7.2
     "@heroicons/react": ~2.0.11
     "@trivago/prettier-plugin-sort-imports": ~4.1.1
@@ -3959,13 +4011,16 @@ __metadata:
     "@uniswap/sdk-core": ~4.0.1
     "@uniswap/v2-sdk": ~3.0.1
     autoprefixer: ~10.4.12
+    bignumber.js: ^9.1.2
     blo: ~1.0.1
     connectkit: ^1.6.0
     daisyui: ~4.4.19
+    dayjs: ^1.11.10
     eslint: ~8.24.0
     eslint-config-next: ~13.1.6
     eslint-config-prettier: ~8.5.0
     eslint-plugin-prettier: ~4.2.1
+    ethers: 5
     next: ~13.1.6
     nextjs-progressbar: ~0.0.16
     postcss: ~8.4.16
@@ -3975,6 +4030,7 @@ __metadata:
     react-copy-to-clipboard: ~5.1.0
     react-dom: ~18.2.0
     react-hot-toast: ~2.4.0
+    reflect-metadata: ^0.2.1
     tailwindcss: ~3.3.3
     type-fest: ~4.6.0
     typescript: ~5.1.6
@@ -6649,6 +6705,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bignumber.js@npm:^9.1.2":
+  version: 9.1.2
+  resolution: "bignumber.js@npm:9.1.2"
+  checksum: 582c03af77ec9cb0ebd682a373ee6c66475db94a4325f92299621d544aa4bd45cb45fd60001610e94aef8ae98a0905fa538241d9638d4422d57abbeeac6fadaf
+  languageName: node
+  linkType: hard
+
 "binary-extensions@npm:^2.0.0":
   version: 2.2.0
   resolution: "binary-extensions@npm:2.2.0"
@@ -7824,6 +7887,13 @@ __metadata:
   version: 3.0.1
   resolution: "data-uri-to-buffer@npm:3.0.1"
   checksum: c59c3009686a78c071806b72f4810856ec28222f0f4e252aa495ec027ed9732298ceea99c50328cf59b151dd34cbc3ad6150bbb43e41fc56fa19f48c99e9fc30
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.11.10":
+  version: 1.11.10
+  resolution: "dayjs@npm:1.11.10"
+  checksum: a6b5a3813b8884f5cd557e2e6b7fa569f4c5d0c97aca9558e38534af4f2d60daafd3ff8c2000fed3435cfcec9e805bcebd99f90130c6d1c5ef524084ced588c4
   languageName: node
   linkType: hard
 
@@ -9687,7 +9757,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.7.0, ethers@npm:^5.7.1, ethers@npm:^5.7.2, ethers@npm:~5.7.1":
+"ethers@npm:5, ethers@npm:^5.7.0, ethers@npm:^5.7.1, ethers@npm:^5.7.2, ethers@npm:~5.7.1":
   version: 5.7.2
   resolution: "ethers@npm:5.7.2"
   dependencies:
@@ -11958,6 +12028,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"isomorphic-unfetch@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "isomorphic-unfetch@npm:3.1.0"
+  dependencies:
+    node-fetch: ^2.6.1
+    unfetch: ^4.2.0
+  checksum: 82b92fe4ec2823a81ab0fc0d11bd94d710e6f9a940d56b3cba31896d4345ec9ffc7949f4ff31ebcae84f6b95f7ebf3474c4c7452b834eb4078ea3f2c37e459c5
+  languageName: node
+  linkType: hard
+
 "isows@npm:1.0.3":
   version: 1.0.3
   resolution: "isows@npm:1.0.3"
@@ -13953,7 +14033,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7":
+"node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -15488,6 +15568,13 @@ __metadata:
   version: 2.0.0
   resolution: "reduce-flatten@npm:2.0.0"
   checksum: 64393ef99a16b20692acfd60982d7fdbd7ff8d9f8f185c6023466444c6dd2abb929d67717a83cec7f7f8fb5f46a25d515b3b2bf2238fdbfcdbfd01d2a9e73cb8
+  languageName: node
+  linkType: hard
+
+"reflect-metadata@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "reflect-metadata@npm:0.2.1"
+  checksum: 772f552a544e04b999c1bf2c868225fef10032274e9d9e315bc3e7a687a504b8b115fa71966665b9619acfd323123a941f892b593250140da809330d41564181
   languageName: node
   linkType: hard
 
@@ -17781,6 +17868,13 @@ __metadata:
     node-fetch-native: ^1.6.1
     pathe: ^1.1.1
   checksum: 4cfbeedee1436e7f417d655c521e4c6220228f5b96afff90b5253d4504282c6de5acdd982aa51c977ce38d21d7692a33d10fc857166b3488655ff29c3bb754a2
+  languageName: node
+  linkType: hard
+
+"unfetch@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "unfetch@npm:4.2.0"
+  checksum: 6a4b2557e1d921eaa80c4425ce27a404945ec26491ed06e62598f333996a91a44c7908cb26dc7c2746d735762b13276cf4aa41829b4c8f438dde63add3045d7a
   languageName: node
   linkType: hard
 
