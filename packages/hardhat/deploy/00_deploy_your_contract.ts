@@ -24,12 +24,12 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
   await deploy("GhoFundStreams", {
     from: deployer,
-    args: [poolMock.address, ghoMock.address],
+    args: [deployer, poolMock.address, ghoMock.address],
     log: true,
     autoMine: true,
   });
 
-  // Get GHOMock contract instance
+  // Setup
   const ghoMockContract = await hre.ethers.getContract<Contract>("GHOMock", deployer);
   await ghoMockContract.mint(poolMock.address, 1000);
 };
