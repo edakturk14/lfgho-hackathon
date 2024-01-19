@@ -1,16 +1,37 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
+import { Contract } from "ethers";
 
 const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  await deploy("GhoFundStreams", {
+  // deploy GHOMock
+  const ghoMock = await deploy("GHOMock", {
     from: deployer,
     args: [],
     log: true,
     autoMine: true,
   });
+
+  // deploy PoolMock
+  const poolMock = await deploy("PoolMock", {
+    from: deployer,
+    args: [ghoMock.address],
+    log: true,
+    autoMine: true,
+  });
+
+  await deploy("GhoFundStreams", {
+    from: deployer,
+    args: [poolMock.address, ghoMock.address],
+    log: true,
+    autoMine: true,
+  });
+
+  // Setup
+  const ghoMockContract = await hre.ethers.getContract<Contract>("GHOMock", deployer);
+  await ghoMockContract.mint(poolMock.address, 1000);
 };
 
 export default deployYourContract;

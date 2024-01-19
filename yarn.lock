@@ -26,6 +26,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aave/core-v3@npm:^1.18.0":
+  version: 1.19.0
+  resolution: "@aave/core-v3@npm:1.19.0"
+  checksum: 42470788f81e85945c4722d6578add6d4ba0070faabb322e1d2db038c2bf637177feefe86af9bb4b9691d39e4027c76845ad836bd06bc16b221cb16e2e768ffe
+  languageName: node
+  linkType: hard
+
 "@aave/math-utils@npm:^1.21.1":
   version: 1.21.1
   resolution: "@aave/math-utils@npm:1.21.1"
@@ -3939,6 +3946,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@se-2/hardhat@workspace:packages/hardhat"
   dependencies:
+    "@aave/core-v3": ^1.18.0
     "@ethersproject/abi": ~5.7.0
     "@ethersproject/providers": ~5.7.1
     "@matterlabs/hardhat-zksync-solc": ~0.3.17
