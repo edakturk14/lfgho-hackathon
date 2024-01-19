@@ -138,7 +138,7 @@ const BuildersInfo = () => {
                     </strong>
                   </div>
                   <div>
-                    Ξ {formatEther(event.args.amount)} / {event.args.reason}
+                    Ξ {formatEther(event.args.GHOamount)} / {event.args.reason}
                   </div>
                 </div>
               );

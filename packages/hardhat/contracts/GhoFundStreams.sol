@@ -4,10 +4,12 @@ pragma solidity >=0.8.0 <0.9.0;
 import "@aave/core-v3/contracts/interfaces/IPool.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@aave/periphery-v3/contracts/misc/interfaces/IWrappedTokenGatewayV3.sol";
 
 contract GhoFundStreams is Ownable {
 	IPool public aavePool;
 	IERC20 public GHO;
+	IWrappedTokenGatewayV3 public wethGateway;
 
 	struct BuilderStreamInfo {
 		uint256 GHOcap;
@@ -21,10 +23,16 @@ contract GhoFundStreams is Ownable {
 	event AddBuilder(address indexed to, uint256 GHOamount);
 	event UpdateBuilder(address indexed to, uint256 GHOamount);
 
-	constructor(address _owner, address _aavePoolAddress, address _GHOAddress) {
+	constructor(
+		address _owner,
+		address _aavePoolAddress,
+		address _GHOAddress,
+		address _wethGatewayAddress
+	) {
 		super.transferOwnership(_owner);
 		aavePool = IPool(_aavePoolAddress);
 		GHO = IERC20(_GHOAddress);
+		wethGateway = IWrappedTokenGatewayV3(_wethGatewayAddress);
 	}
 
 	// Get all builder data at once.
@@ -124,13 +132,17 @@ contract GhoFundStreams is Ownable {
 	function borrowGHO(uint256 _GHOamount) public onlyOwner {
 		// GHOamount vs ETHamount? And borrow the allowed.
 		// Supply first? ETH from contract or payable?
-		IPool(aavePool).borrow(address(GHO), _GHOamount, 1, 0, address(this));
+		IPool(aavePool).borrow(address(GHO), _GHOamount, 2, 0, address(this));
 	}
 
 	/**
 	 * Function that allows the contract to receive ETH
 	 */
 	receive() external payable {
-		IPool(aavePool).supply(address(0), msg.value, address(this), 0);
+		wethGateway.depositETH{ value: msg.value }(
+			address(aavePool),
+			address(this),
+			0
+		);
 	}
 }

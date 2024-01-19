@@ -746,7 +746,7 @@ const deployedContracts = {
   },
   11155111: {
     GhoFundStreams: {
-      address: "0xAF8F6cFb5BFdF5f030307AB01F95855749509209",
+      address: "0xA439890593F96d23268eBEBd4553dDd0359E1Cc3",
       abi: [
         {
           inputs: [
@@ -763,6 +763,11 @@ const deployedContracts = {
             {
               internalType: "address",
               name: "_GHOAddress",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_wethGatewayAddress",
               type: "address",
             },
           ],
@@ -1064,6 +1069,19 @@ const deployedContracts = {
               internalType: "uint256",
               name: "",
               type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "wethGateway",
+          outputs: [
+            {
+              internalType: "contract IWrappedTokenGatewayV3",
+              name: "",
+              type: "address",
             },
           ],
           stateMutability: "view",

@@ -17,7 +17,6 @@ const USD_DECIMALS = 6;
 const provider = new ethers.providers.JsonRpcProvider("https://eth-sepolia.public.blastapi.io");
 
 // User address to fetch data for, insert address here
-const currentAccount = "0x55b9CB0bCf56057010b9c471e7D42d60e1111EEa";
 
 // View contract used to fetch all reserves data (including market base currency data), and user reserves
 // Using Aave V3 Eth goerli address for demo
@@ -41,7 +40,7 @@ const ghoService = new GhoService({
   uiGhoDataProviderAddress: markets.AaveV3Sepolia.UI_GHO_DATA_PROVIDER, // Sepolia GHO Market
 });
 
-export async function fetchAaveDetails() {
+export async function fetchAaveDetails(currentAccount: string) {
   // Object containing array of pool reserves and market base currency data
   // { reservesArray, baseCurrencyData }
   const reserves = await poolDataProviderContract.getReservesHumanized({

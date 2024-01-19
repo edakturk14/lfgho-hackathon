@@ -28,9 +28,10 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const getAaveDetails = async () => {
+      if (!streamContract?.address) return;
       setAaveDetailsLoading(true);
       try {
-        const data = await fetchAaveDetails();
+        const data = await fetchAaveDetails(streamContract?.address);
         setAaveDetails(data);
       } catch (e) {
         console.log("Error getting aave details", e);
@@ -41,7 +42,7 @@ const Home: NextPage = () => {
     };
 
     getAaveDetails();
-  }, []);
+  }, [streamContract?.address]);
 
   return (
     <>

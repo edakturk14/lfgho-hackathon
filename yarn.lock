@@ -26,7 +26,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aave/core-v3@npm:^1.18.0":
+"@aave/core-v3@npm:1.19.0, @aave/core-v3@npm:^1.18.0":
   version: 1.19.0
   resolution: "@aave/core-v3@npm:1.19.0"
   checksum: 42470788f81e85945c4722d6578add6d4ba0070faabb322e1d2db038c2bf637177feefe86af9bb4b9691d39e4027c76845ad836bd06bc16b221cb16e2e768ffe
@@ -40,6 +40,15 @@ __metadata:
     bignumber.js: ^9.x
     tslib: ^2.4.x
   checksum: 3372b09b0c947db1a80359d52c4027ce8950f3f474f5a18a93254a6f2bf00430e3d318ce08f80b661e36e48ace49116affa481071f9c84d0dfc8fee4aebd2c48
+  languageName: node
+  linkType: hard
+
+"@aave/periphery-v3@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "@aave/periphery-v3@npm:2.5.0"
+  dependencies:
+    "@aave/core-v3": 1.19.0
+  checksum: 4af7a07181097e5fdbda9e1012b8e81c868e447b2050418cd051edcac324db6d0033200bcb5e4d6031bc818613ccf9f2e758fb9e97c94a283d1fbec51ba8404e
   languageName: node
   linkType: hard
 
@@ -3947,6 +3956,7 @@ __metadata:
   resolution: "@se-2/hardhat@workspace:packages/hardhat"
   dependencies:
     "@aave/core-v3": ^1.18.0
+    "@aave/periphery-v3": ^2.5.0
     "@ethersproject/abi": ~5.7.0
     "@ethersproject/providers": ~5.7.1
     "@matterlabs/hardhat-zksync-solc": ~0.3.17
