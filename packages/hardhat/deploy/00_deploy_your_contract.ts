@@ -29,7 +29,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
   });
 
-  // Get GHOMock contract instance
+  // Setup
   const ghoMockContract = await hre.ethers.getContract<Contract>("GHOMock", deployer);
   await ghoMockContract.mint(poolMock.address, 1000);
 };
