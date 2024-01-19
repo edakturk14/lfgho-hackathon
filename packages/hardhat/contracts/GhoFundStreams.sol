@@ -1,10 +1,16 @@
 //SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
+import "@aave/core-v3/contracts/interfaces/IPool.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {PoolMock} from "./PoolMock.sol";
 
 // ToDo. Access control.
 // ToDo. GHO integration
 contract GhoFundStreams {
+	IPool public aavePool;
+	IERC20 public GHO;
+
 	struct BuilderStreamInfo {
 		uint256 GHOcap;
 		uint256 last;
@@ -16,6 +22,12 @@ contract GhoFundStreams {
 	event Withdraw(address indexed to, uint256 GHOamount, string reason);
 	event AddBuilder(address indexed to, uint256 GHOamount);
 	event UpdateBuilder(address indexed to, uint256 GHOamount);
+
+    constructor(address _aavePoolAddress, address _GHOAddress) {
+		aavePool = IPool(_aavePoolAddress);
+		GHO = IERC20(_GHOAddress);
+	}
+
 
 	// Get all builder data at once.
 	struct BuilderData {
@@ -53,7 +65,7 @@ contract GhoFundStreams {
 		require(builderStream.GHOcap > 0, "No active stream for builder");
 
 		uint256 totalAmountCanWithdraw = unlockedBuilderAmount(msg.sender);
-		require(totalAmountCanWithdraw >= _GHOamount,"Not enough unlocked GHO in the stream");
+		require(totalAmountCanWithdraw >= _GHOamount, "Not enough unlocked GHO in the stream");
 
 		uint256 cappedLast = block.timestamp - frequency;
 		if (builderStream.last < cappedLast){
@@ -62,7 +74,7 @@ contract GhoFundStreams {
 
 		builderStream.last = builderStream.last + ((block.timestamp - builderStream.last) * _GHOamount / totalAmountCanWithdraw);
 
-		// ToDo. Transfer GHO to builder.
+		GHO.transfer(msg.sender, _GHOamount);
 
 		emit Withdraw(msg.sender, _GHOamount, _reason);
 	}
@@ -82,7 +94,10 @@ contract GhoFundStreams {
 	}
 
 	// ToDo. Add access control.
-	function borrowGHO(uint256 _GHOamount) public {}
+	function borrowGHO(uint256 _GHOamount) public {
+		// Supply first? ETH from contract or payable?
+		IPool(aavePool).borrow(address(GHO), _GHOamount, 1, 0, address(this));
+	}
 
 	/**
 	 * Function that allows the contract to receive ETH
