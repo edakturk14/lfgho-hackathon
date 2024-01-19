@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import type { NextPage } from "next";
-import { parseEther } from "viem";
-import { useAccount, useBalance } from "wagmi";
+import { createPublicClient, http, parseEther } from "viem";
+import { normalize } from "viem/ens";
+import { mainnet, useAccount } from "wagmi";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import BuildersInfo from "~~/components/BuildersInfo";
 import { MetaHeader } from "~~/components/MetaHeader";
@@ -10,17 +11,81 @@ import { useDeployedContractInfo, useScaffoldContractWrite, useTransactor } from
 import { AaveData, fetchAaveDetails } from "~~/utils/aave";
 import { notification } from "~~/utils/scaffold-eth";
 
-const Home: NextPage = () => {
-  const [reason, setReason] = useState("");
+const Admin: NextPage = () => {
   const [amount, setAmount] = useState("");
+  const [wallets, setWallets] = useState<string[]>([]);
+
+  const [invalidEnsNames, setInvalidEnsNames] = useState<string[]>([]);
+
+  const publicClient = createPublicClient({
+    chain: mainnet,
+    transport: http(),
+  });
+
+  async function addMultipleAddress(value: string) {
+    const validateAddress = (address: string) => address.includes("0x") && address.length === 42;
+    const resolveEns = async (address: string) => {
+      const ensAddress = await publicClient.getEnsAddress({
+        name: normalize(address),
+      });
+      return String(ensAddress);
+    };
+
+    let addresses: string[];
+    if (value.includes(",")) {
+      addresses = value
+        .trim()
+        .split(",")
+        .map(str => str.replace(/\n/g, "").replace(/\s/g, ""));
+    } else {
+      addresses = value
+        .trim()
+        .split(/\s+/)
+        .map(str => str.replace(/\s/g, ""));
+    }
+
+    const resolvedAddresses: string[] = [];
+    setInvalidEnsNames([]);
+    await Promise.all(
+      addresses.map(async address => {
+        if (address.endsWith(".eth")) {
+          const resolvedAddress = await resolveEns(address);
+          if (resolvedAddress === "null") {
+            setInvalidEnsNames(prevState => [...prevState, address]);
+          }
+          resolvedAddresses.push(resolvedAddress);
+        } else {
+          resolvedAddresses.push(address);
+        }
+      }),
+    );
+
+    let uniqueAddresses = [...new Set([...resolvedAddresses])];
+
+    uniqueAddresses = uniqueAddresses.filter(validateAddress);
+
+    setWallets(uniqueAddresses);
+  }
+
+  const { writeAsync: addBatchBuilders } = useScaffoldContractWrite({
+    contractName: "GhoFundStreams",
+    functionName: "addBuilderStreamBatch",
+    // create an array of wallets length each value with amount value
+    args: [wallets, [...Array.from({ length: wallets?.length }, () => (amount ? parseEther(amount) : 0n))]],
+  });
+
+  // ------------------
+  //
+  //
+  // BSSSSSSSSSSSSSSSSS
+  //
+  //
+  // -----------------------
+  const [reason, setReason] = useState("");
   const { data: streamContract } = useDeployedContractInfo("GhoFundStreams");
   const [aaveDetails, setAaveDetails] = useState<AaveData | undefined>();
   const [aaveDetailsLoading, setAaveDetailsLoading] = useState(true);
   const { address: connectedAddress } = useAccount();
-  const { data: balanceOfGHO } = useBalance({
-    address: streamContract?.address,
-    token: "0xc4bF5CbDaBE595361438F8c6a187bDc330539c60",
-  });
 
   const { writeAsync: doWithdraw } = useScaffoldContractWrite({
     contractName: "GhoFundStreams",
@@ -134,11 +199,9 @@ const Home: NextPage = () => {
                 </span>
               </p>
               {aaveDetails && !aaveDetailsLoading ? (
-                <>
-                  <div className="flex gap-1 items-center">
-                    $ {parseFloat(aaveDetails.formattedUserSummary.totalCollateralUSD).toFixed(2)}
-                  </div>
-                </>
+                <div className="flex gap-1 items-center">
+                  $ {parseFloat(aaveDetails.formattedUserSummary.totalCollateralUSD).toFixed(2)}
+                </div>
               ) : null}
             </div>
           </div>
@@ -154,13 +217,9 @@ const Home: NextPage = () => {
                 </span>
               </p>
               {aaveDetails && !aaveDetailsLoading ? (
-                <>
-                  <div className="flex gap-1 items-center">
-                    $ {aaveDetails.formattedGhoUserData.userGhoBorrowBalance.toFixed(2)}
-                  </div>
-
-                  <div className="flex gap-1 items-center">$ {balanceOfGHO?.formatted}</div>
-                </>
+                <div className="flex gap-1 items-center">
+                  $ {aaveDetails.formattedGhoUserData.userGhoBorrowBalance.toFixed(2)}
+                </div>
               ) : null}
             </div>
           </div>
@@ -185,16 +244,13 @@ const Home: NextPage = () => {
               </div>
               <div className="flex flex-col space-y-1">
                 <p className="font-bold m-0 text-secondary">
-                  Withdraw
-                  <span
-                    className="tooltip text-secondary font-normal"
-                    data-tip="Withdraw GHO tokens by adding your contributions"
-                  >
+                  Add new builders
+                  <span className="tooltip text-secondary font-normal" data-tip="Add new builders stream">
                     <QuestionMarkCircleIcon className="h-5 w-5 inline-block ml-2" />
                   </span>
                 </p>
-                <label htmlFor="withdraw-modal" className="btn btn-primary btn-sm">
-                  <span>Withdraw</span>
+                <label htmlFor="add-builder-modal" className="btn btn-primary btn-sm">
+                  <span>add</span>
                 </label>
               </div>
             </div>
@@ -258,8 +314,58 @@ const Home: NextPage = () => {
           </div>
         </label>
       </label>
+
+      {/* Add new builders */}
+      <input type="checkbox" id="add-builder-modal" className="modal-toggle" />
+      <label htmlFor="add-builder-modal" className="modal cursor-pointer">
+        <label className="modal-box relative bg-base-300 shadow shadow-primary">
+          {/* dummy input to capture event onclick on modal box */}
+          <input className="h-0 w-0 absolute top-0 left-0" />
+          <h3 className="text-xl font-bold mb-8 text-gray-500">Add new builders</h3>
+          <label
+            htmlFor="add-builder-modal"
+            className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3"
+            onClick={() => {
+              setWallets([]);
+              setAmount("0");
+            }}
+          >
+            ✕
+          </label>
+          <div className="space-y-3">
+            <div className="flex flex-col gap-6">
+              <div className={`flex bg-slate-100 rounded-lg text-accent`}>
+                <textarea
+                  className="input input-ghost focus:outline-none focus:bg-transparent focus:text-accent h-16 px-4 border w-full placeholder:text-gray-400 text-accent py-2"
+                  placeholder={"Seperate each address with a comma, space or new line"}
+                  onChange={e => addMultipleAddress(e.target.value)}
+                  autoComplete="off"
+                />
+              </div>
+              <EtherInput value={amount} onChange={value => setAmount(value)} placeholder="Stream amount" />
+              <button
+                disabled={wallets.length <= 1 || amount === "0"}
+                className="btn btn-primary btn-md"
+                onClick={async () => {
+                  if (connectedAddress && streamContract?.address) {
+                    await addBatchBuilders();
+                  }
+                }}
+              >
+                Add
+              </button>
+              <div>
+                <h1 className="ml-2 -mt-1">valid unique addresses: {wallets.length}</h1>
+                {invalidEnsNames.length > 0 && (
+                  <h1 className="ml-2 ">Invalid Ens Names: {invalidEnsNames.join(", ")}</h1>
+                )}
+              </div>
+            </div>
+          </div>
+        </label>
+      </label>
     </>
   );
 };
 
-export default Home;
+export default Admin;
