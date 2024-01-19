@@ -13,13 +13,13 @@ import { notification } from "~~/utils/scaffold-eth";
 const Home: NextPage = () => {
   const [reason, setReason] = useState("");
   const [amount, setAmount] = useState("");
-  const { data: streamContract } = useDeployedContractInfo("SandGardenStreams");
+  const { data: streamContract } = useDeployedContractInfo("GhoFundStreams");
   const [aaveDetails, setAaveDetails] = useState<AaveData | undefined>();
   const [aaveDetailsLoading, setAaveDetailsLoading] = useState(true);
   const { address: connectedAddress } = useAccount();
 
   const { writeAsync: doWithdraw } = useScaffoldContractWrite({
-    contractName: "SandGardenStreams",
+    contractName: "GhoFundStreams",
     functionName: "streamWithdraw",
     args: [parseEther(amount || "0"), reason],
   });

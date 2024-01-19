@@ -11,20 +11,20 @@ const BuildersInfo = () => {
   const [builderList, setBuilderList] = useState<string[]>([]);
 
   const { data: allBuildersData, isLoading: isLoadingBuilderData } = useScaffoldContractRead({
-    contractName: "SandGardenStreams",
+    contractName: "GhoFundStreams",
     functionName: "allBuildersData",
     args: [builderList],
   });
 
   const { data: newContractWithdrawEvents, isLoading: isLoadingNewContractWithdrawEvents } = useScaffoldEventHistory({
-    contractName: "SandGardenStreams",
+    contractName: "GhoFundStreams",
     eventName: "Withdraw",
     fromBlock: scaffoldConfig.contracts.SandGardenStreams.fromBlock,
     blockData: true,
   });
 
   const { data: addBuilderEvents, isLoading: isLoadingBuilderEvents } = useScaffoldEventHistory({
-    contractName: "SandGardenStreams",
+    contractName: "GhoFundStreams",
     eventName: "AddBuilder",
     fromBlock: scaffoldConfig.contracts.SandGardenStreams.fromBlock,
   });
@@ -69,10 +69,10 @@ const BuildersInfo = () => {
           </div>
         ) : (
           <div className="flex flex-col gap-6">
-            {sortedBuilders?.map(builderData => {
-              if (builderData.cap === 0n) return;
-              const cap = formatEther(builderData.cap || 0n);
-              const unlocked = formatEther(builderData.unlockedAmount || 0n);
+            {sortedBuilders?.map((builderData: any) => {
+              if (builderData.GHOcap === 0n) return;
+              const cap = formatEther(builderData.GHOcap || 0n);
+              const unlocked = formatEther(builderData.unlockedGHOAmount || 0n);
               const percentage = Math.floor((parseFloat(unlocked) / parseFloat(cap)) * 100);
               return (
                 <div className="flex flex-col md:flex-row gap-2 md:gap-6" key={builderData.builderAddress}>

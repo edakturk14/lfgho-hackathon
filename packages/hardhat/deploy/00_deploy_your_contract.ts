@@ -6,32 +6,42 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  // deploy GHOMock
-  const ghoMock = await deploy("GHOMock", {
-    from: deployer,
-    args: [],
-    log: true,
-    autoMine: true,
-  });
+  // This are sepolia addresses
+  let poolAddress = "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951";
+  let ghoAddress = "0xc4bF5CbDaBE595361438F8c6a187bDc330539c60";
 
-  // deploy PoolMock
-  const poolMock = await deploy("PoolMock", {
-    from: deployer,
-    args: [ghoMock.address],
-    log: true,
-    autoMine: true,
-  });
+  // Check if the network is hardhat network then use mock address or else use the real address
+  if (hre.network.name === "hardhat") {
+    // deploy GHOMock
+    const ghoMock = await deploy("GHOMock", {
+      from: deployer,
+      args: [],
+      log: true,
+      autoMine: true,
+    });
+
+    // deploy PoolMock
+    const poolMock = await deploy("PoolMock", {
+      from: deployer,
+      args: [ghoMock.address],
+      log: true,
+      autoMine: true,
+    });
+
+    poolAddress = poolMock.address;
+    ghoAddress = ghoMock.address;
+
+    // Setup
+    const ghoMockContract = await hre.ethers.getContract<Contract>("GHOMock", deployer);
+    await ghoMockContract.mint(poolMock.address, 1000);
+  }
 
   await deploy("GhoFundStreams", {
     from: deployer,
-    args: [poolMock.address, ghoMock.address],
+    args: ["0x55b9CB0bCf56057010b9c471e7D42d60e1111EEa", poolAddress, ghoAddress],
     log: true,
     autoMine: true,
   });
-
-  // Setup
-  const ghoMockContract = await hre.ethers.getContract<Contract>("GHOMock", deployer);
-  await ghoMockContract.mint(poolMock.address, 1000);
 };
 
 export default deployYourContract;

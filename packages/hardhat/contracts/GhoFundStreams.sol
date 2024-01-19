@@ -4,7 +4,6 @@ pragma solidity >=0.8.0 <0.9.0;
 import "@aave/core-v3/contracts/interfaces/IPool.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import {GHOMock} from "./GHOMock.sol";
 
 contract GhoFundStreams is Ownable {
 	IPool public aavePool;
@@ -22,7 +21,7 @@ contract GhoFundStreams is Ownable {
 	event AddBuilder(address indexed to, uint256 GHOamount);
 	event UpdateBuilder(address indexed to, uint256 GHOamount);
 
-    constructor(address _owner, address _aavePoolAddress, address _GHOAddress) {
+	constructor(address _owner, address _aavePoolAddress, address _GHOAddress) {
 		super.transferOwnership(_owner);
 		aavePool = IPool(_aavePoolAddress);
 		GHO = IERC20(_GHOAddress);
@@ -34,18 +33,29 @@ contract GhoFundStreams is Ownable {
 		uint256 GHOcap;
 		uint256 unlockedGHOAmount;
 	}
-	function allBuildersData(address[] memory _builders) public view returns (BuilderData[] memory) {
+
+	function allBuildersData(
+		address[] memory _builders
+	) public view returns (BuilderData[] memory) {
 		BuilderData[] memory result = new BuilderData[](_builders.length);
 		for (uint256 i = 0; i < _builders.length; i++) {
 			address builderAddress = _builders[i];
-			BuilderStreamInfo storage builderStream = streamedBuilders[builderAddress];
-			result[i] = BuilderData(builderAddress, builderStream.GHOcap, unlockedBuilderAmount(builderAddress));
+			BuilderStreamInfo storage builderStream = streamedBuilders[
+				builderAddress
+			];
+			result[i] = BuilderData(
+				builderAddress,
+				builderStream.GHOcap,
+				unlockedBuilderAmount(builderAddress)
+			);
 		}
 		return result;
 	}
 
 	// Available amount of GHO for a builder.
-	function unlockedBuilderAmount(address _builder) public view returns (uint256) {
+	function unlockedBuilderAmount(
+		address _builder
+	) public view returns (uint256) {
 		BuilderStreamInfo memory builderStream = streamedBuilders[_builder];
 		if (builderStream.GHOcap == 0) {
 			return 0;
@@ -55,43 +65,64 @@ contract GhoFundStreams is Ownable {
 			return builderStream.GHOcap;
 		}
 
-		return (builderStream.GHOcap * (block.timestamp - builderStream.last)) / frequency;
+		return
+			(builderStream.GHOcap * (block.timestamp - builderStream.last)) /
+			frequency;
 	}
 
 	function streamWithdraw(uint256 _GHOamount, string memory _reason) public {
-		require(GHO.balanceOf(address(this)) >= _GHOamount, "Not enough GHO in the contract");
+		require(
+			GHO.balanceOf(address(this)) >= _GHOamount,
+			"Not enough GHO in the contract"
+		);
 
 		BuilderStreamInfo storage builderStream = streamedBuilders[msg.sender];
 		require(builderStream.GHOcap > 0, "No active stream for builder");
 
 		uint256 totalAmountCanWithdraw = unlockedBuilderAmount(msg.sender);
-		require(totalAmountCanWithdraw >= _GHOamount, "Not enough unlocked GHO in the stream");
+		require(
+			totalAmountCanWithdraw >= _GHOamount,
+			"Not enough unlocked GHO in the stream"
+		);
 
 		uint256 cappedLast = block.timestamp - frequency;
-		if (builderStream.last < cappedLast){
+		if (builderStream.last < cappedLast) {
 			builderStream.last = cappedLast;
 		}
 
-		builderStream.last = builderStream.last + ((block.timestamp - builderStream.last) * _GHOamount / totalAmountCanWithdraw);
+		builderStream.last =
+			builderStream.last +
+			(((block.timestamp - builderStream.last) * _GHOamount) /
+				totalAmountCanWithdraw);
 
 		GHO.transfer(msg.sender, _GHOamount);
 
 		emit Withdraw(msg.sender, _GHOamount, _reason);
 	}
 
-	function addBuilderStream(address payable _builder, uint256 _GHOcap) public isOwner {
-		streamedBuilders[_builder] = BuilderStreamInfo(_GHOcap, block.timestamp - frequency);
+	function addBuilderStream(
+		address payable _builder,
+		uint256 _GHOcap
+	) public onlyOwner {
+		streamedBuilders[_builder] = BuilderStreamInfo(
+			_GHOcap,
+			block.timestamp - frequency
+		);
 		emit AddBuilder(_builder, _GHOcap);
 	}
 
-	function addBuilderStreamBatch(address[] memory _builders, uint256[] memory _GHOcaps) public isOwner {
+	function addBuilderStreamBatch(
+		address[] memory _builders,
+		uint256[] memory _GHOcaps
+	) public onlyOwner {
 		require(_builders.length == _GHOcaps.length, "Lengths are not equal");
 		for (uint256 i = 0; i < _builders.length; i++) {
 			addBuilderStream(payable(_builders[i]), _GHOcaps[i]);
 		}
 	}
 
-	function borrowGHO(uint256 _GHOamount) public isOwner {
+	function borrowGHO(uint256 _GHOamount) public onlyOwner {
+		// GHOamount vs ETHamount? And borrow the allowed.
 		// Supply first? ETH from contract or payable?
 		IPool(aavePool).borrow(address(GHO), _GHOamount, 1, 0, address(this));
 	}
@@ -99,5 +130,7 @@ contract GhoFundStreams is Ownable {
 	/**
 	 * Function that allows the contract to receive ETH
 	 */
-	receive() external payable {}
+	receive() external payable {
+		IPool(aavePool).supply(address(0), msg.value, address(this), 0);
+	}
 }
