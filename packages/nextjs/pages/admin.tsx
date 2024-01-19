@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { createPublicClient, http, parseEther } from "viem";
 import { normalize } from "viem/ens";
-import { mainnet, useAccount } from "wagmi";
+import { mainnet, useAccount, useBalance } from "wagmi";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import BuildersInfo from "~~/components/BuildersInfo";
 import { MetaHeader } from "~~/components/MetaHeader";
@@ -10,6 +10,14 @@ import { Address, Balance, EtherInput, InputBase } from "~~/components/scaffold-
 import { useDeployedContractInfo, useScaffoldContractWrite, useTransactor } from "~~/hooks/scaffold-eth";
 import { AaveData, fetchAaveDetails } from "~~/utils/aave";
 import { notification } from "~~/utils/scaffold-eth";
+
+const Loading = () => (
+  <div className="animate-pulse flex space-x-4">
+    <div className="flex items-center">
+      <div className="h-6 w-28 bg-slate-300 rounded"></div>
+    </div>
+  </div>
+);
 
 const Admin: NextPage = () => {
   const [amount, setAmount] = useState("");
@@ -67,6 +75,13 @@ const Admin: NextPage = () => {
     setWallets(uniqueAddresses);
   }
 
+  const { data: streamContract } = useDeployedContractInfo("GhoFundStreams");
+
+  const { data: balanceOfGHO } = useBalance({
+    address: streamContract?.address,
+    token: "0xc4bF5CbDaBE595361438F8c6a187bDc330539c60",
+  });
+
   const { writeAsync: addBatchBuilders } = useScaffoldContractWrite({
     contractName: "GhoFundStreams",
     functionName: "addBuilderStreamBatch",
@@ -82,7 +97,6 @@ const Admin: NextPage = () => {
   //
   // -----------------------
   const [reason, setReason] = useState("");
-  const { data: streamContract } = useDeployedContractInfo("GhoFundStreams");
   const [aaveDetails, setAaveDetails] = useState<AaveData | undefined>();
   const [aaveDetailsLoading, setAaveDetailsLoading] = useState(true);
   const { address: connectedAddress } = useAccount();
@@ -164,7 +178,9 @@ const Admin: NextPage = () => {
                   <div className="flex gap-1 items-center">
                     {parseFloat(aaveDetails.formattedUserSummary.healthFactor).toFixed(2)}%
                   </div>
-                ) : null}
+                ) : (
+                  <Loading />
+                )}
               </div>
               <div className="flex flex-col">
                 <p className="font-bold m-0 text-secondary">
@@ -180,7 +196,9 @@ const Admin: NextPage = () => {
                   <div className="flex gap-1 items-center">
                     {parseFloat(aaveDetails.formattedUserSummary.currentLoanToValue).toFixed(2)}
                   </div>
-                ) : null}
+                ) : (
+                  <Loading />
+                )}
               </div>
             </div>
           </div>
@@ -202,7 +220,9 @@ const Admin: NextPage = () => {
                 <div className="flex gap-1 items-center">
                   $ {parseFloat(aaveDetails.formattedUserSummary.totalCollateralUSD).toFixed(2)}
                 </div>
-              ) : null}
+              ) : (
+                <Loading />
+              )}
             </div>
           </div>
 
@@ -220,7 +240,26 @@ const Admin: NextPage = () => {
                 <div className="flex gap-1 items-center">
                   $ {aaveDetails.formattedGhoUserData.userGhoBorrowBalance.toFixed(2)}
                 </div>
-              ) : null}
+              ) : (
+                <Loading />
+              )}
+            </div>
+            <div className="flex flex-col">
+              <p className="font-bold m-0 text-secondary">
+                Current GHO Balance
+                <span className="tooltip text-secondary font-normal" data-tip="Total GHO tokens borrowed.">
+                  <QuestionMarkCircleIcon className="h-5 w-5 inline-block ml-2" />
+                </span>
+              </p>
+              {aaveDetails && !aaveDetailsLoading ? (
+                <>
+                  <div className="flex gap-1 items-center">
+                    $ {parseFloat(balanceOfGHO ? balanceOfGHO.formatted : "0").toFixed(2)}
+                  </div>
+                </>
+              ) : (
+                <Loading />
+              )}
             </div>
           </div>
 
