@@ -1,8 +1,8 @@
-# GHOFundMe 
+# GHOFund 
 
 *ETHGlobal LFGHO Hackathon project.*
 
-Welcome to GHOFundMe! We have developed a Treasury Management Platform to bring deep insights and effective management to DAO treasury. Our platform is specifically designed for the use of GHO stablecoins for day to day operations and payments to contributors providing a stable and reliable currency for everyday transactions while allowing teams to supply their own tokens as collateral. The tool is built with [Scaffold-ETH#2](https://github.com/scaffold-eth/scaffold-eth-2). 
+Welcome to GHOFund! We have developed a Treasury Management Platform to bring deep insights and effective management to DAO treasury. Our platform is specifically designed for the use of GHO stablecoins for day to day operations and payments to contributors providing a stable and reliable currency for everyday transactions while allowing teams to supply their own tokens as collateral. The tool is built with [Scaffold-ETH#2](https://github.com/scaffold-eth/scaffold-eth-2). 
 
 ## Features
 
