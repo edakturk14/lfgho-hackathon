@@ -103,6 +103,11 @@ export const Header = () => {
           <HeaderMenuLinks />
         </ul>
       </div>
+      <Link href="/" passHref className="flex lg:hidden items-center gap-2 ml-4 mr-6 shrink-0">
+        <div className="flex relative w-14 h-14">
+          <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.png" />
+        </div>
+      </Link>
       <div className="navbar-end flex-grow mr-4">
         <ConnectKitCustomConnectButton />
         <FaucetButton />

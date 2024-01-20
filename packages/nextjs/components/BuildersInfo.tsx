@@ -85,7 +85,7 @@ const BuildersInfo = () => {
                   <div className="flex flex-col md:flex-row gap-2 md:gap-6" key={builderData.builderAddress}>
                     <div className="flex flex-col md:items-center">
                       <div>
-                        Ξ {parseFloat(unlocked).toFixed(4)} / {cap}
+                        $ {parseFloat(unlocked).toFixed(4)} / {cap}
                       </div>
                       <progress
                         className="progress w-56 progress-primary bg-gray-300 max-w-[100%]"
@@ -147,7 +147,7 @@ const BuildersInfo = () => {
                     </strong>
                   </div>
                   <div>
-                    Ξ {formatEther(event.args.GHOamount)} / {event.args.reason}
+                    $ {formatEther(event.args.GHOamount)} / {event.args.reason}
                   </div>
                 </div>
               );
