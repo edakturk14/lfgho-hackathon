@@ -746,7 +746,7 @@ const deployedContracts = {
   },
   11155111: {
     GhoFundStreams: {
-      address: "0xA439890593F96d23268eBEBd4553dDd0359E1Cc3",
+      address: "0xF0244ab9ccD051CecC626d953CB34419b91A150E",
       abi: [
         {
           inputs: [
