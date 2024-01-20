@@ -55,7 +55,7 @@ const BuildersInfo = () => {
   console.log("All withdraw events are", sortedWithdrawEvents);
 
   return (
-    <div className="flex flex-row space-x-3">
+    <div className="flex flex-col md:flex-row gap-3">
       {/* Builders Div */}
       <div className="flex flex-col shadow-center shadow-secondary rounded-lg p-4 border-4 border-secondary">
         <h1 className="text-2xl text-primary font-bold mb-2">Builders</h1>
@@ -85,10 +85,10 @@ const BuildersInfo = () => {
                   <div className="flex flex-col md:flex-row gap-2 md:gap-6" key={builderData.builderAddress}>
                     <div className="flex flex-col md:items-center">
                       <div>
-                        Ξ {parseFloat(unlocked).toFixed(4)} / {cap}
+                        $ {parseFloat(unlocked).toFixed(4)} / {cap}
                       </div>
                       <progress
-                        className="progress w-56 progress-primary bg-gray-300"
+                        className="progress w-56 progress-primary bg-gray-300 max-w-[100%]"
                         value={percentage}
                         max="100"
                       ></progress>
@@ -147,7 +147,7 @@ const BuildersInfo = () => {
                     </strong>
                   </div>
                   <div>
-                    Ξ {formatEther(event.args.GHOamount)} / {event.args.reason}
+                    $ {formatEther(event.args.GHOamount)} / {event.args.reason}
                   </div>
                 </div>
               );
