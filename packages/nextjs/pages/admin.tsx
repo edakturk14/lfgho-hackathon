@@ -101,6 +101,12 @@ const Admin: NextPage = () => {
   const [aaveDetailsLoading, setAaveDetailsLoading] = useState(true);
   const { address: connectedAddress } = useAccount();
 
+  const { writeAsync: borrowGHO } = useScaffoldContractWrite({
+    contractName: "GhoFundStreams",
+    functionName: "borrowGHO",
+    args: [parseEther(amount || "0")],
+  });
+
   const { writeAsync: doWithdraw } = useScaffoldContractWrite({
     contractName: "GhoFundStreams",
     functionName: "streamWithdraw",
@@ -293,6 +299,22 @@ const Admin: NextPage = () => {
                 </label>
               </div>
             </div>
+            <div className="flex flex-row space-x-5 mt-4">
+              <div className="flex flex-col space-y-1">
+                <p className="font-bold m-0 text-secondary">
+                  Borrow GHO
+                  <span
+                    className="tooltip text-secondary font-normal"
+                    data-tip="Borrow GHO from current collateral present in AAVE"
+                  >
+                    <QuestionMarkCircleIcon className="h-5 w-5 inline-block ml-2" />
+                  </span>
+                </p>
+                <label htmlFor="borrow-modal" className="btn btn-primary btn-sm">
+                  <span>Borrow</span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
         {/* Builders */}
@@ -361,14 +383,7 @@ const Admin: NextPage = () => {
           {/* dummy input to capture event onclick on modal box */}
           <input className="h-0 w-0 absolute top-0 left-0" />
           <h3 className="text-xl font-bold mb-8 text-gray-500">Add new builders</h3>
-          <label
-            htmlFor="add-builder-modal"
-            className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3"
-            onClick={() => {
-              setWallets([]);
-              setAmount("0");
-            }}
-          >
+          <label htmlFor="add-builder-modal" className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3">
             ✕
           </label>
           <div className="space-y-3">
@@ -383,7 +398,7 @@ const Admin: NextPage = () => {
               </div>
               <EtherInput value={amount} onChange={value => setAmount(value)} placeholder="Stream amount" />
               <button
-                disabled={wallets.length <= 1 || amount === "0"}
+                disabled={wallets.length === 0 || amount === "0" || amount.length === 0}
                 className="btn btn-primary btn-md"
                 onClick={async () => {
                   if (connectedAddress && streamContract?.address) {
@@ -399,6 +414,34 @@ const Admin: NextPage = () => {
                   <h1 className="ml-2 ">Invalid Ens Names: {invalidEnsNames.join(", ")}</h1>
                 )}
               </div>
+            </div>
+          </div>
+        </label>
+      </label>
+
+      {/* Borrow Modal */}
+      <input type="checkbox" id="borrow-modal" className="modal-toggle" />
+      <label htmlFor="borrow-modal" className="modal cursor-pointer">
+        <label className="modal-box relative bg-base-300 shadow shadow-primary">
+          {/* dummy input to capture event onclick on modal box */}
+          <input className="h-0 w-0 absolute top-0 left-0" />
+          <h3 className="text-xl font-bold mb-8 text-gray-500">Borrow</h3>
+          <label htmlFor="borrow-modal" className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3">
+            ✕
+          </label>
+          <div className="space-y-3">
+            <div className="flex flex-col gap-6">
+              <EtherInput value={amount} onChange={value => setAmount(value)} placeholder="Borrow amount" />
+              <button
+                className="btn btn-primary btn-md"
+                onClick={async () => {
+                  if (connectedAddress && streamContract?.address) {
+                    await borrowGHO();
+                  }
+                }}
+              >
+                Borrow
+              </button>
             </div>
           </div>
         </label>
