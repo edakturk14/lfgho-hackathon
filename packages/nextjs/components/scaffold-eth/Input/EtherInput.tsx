@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { ArrowsRightLeftIcon } from "@heroicons/react/24/outline";
 import { CommonInputProps, InputBase, SIGNED_NUMBER_REGEX } from "~~/components/scaffold-eth";
-import { useGlobalState } from "~~/services/store/store";
+
+// import { useGlobalState } from "~~/services/store/store";
 
 const MAX_DECIMALS_USD = 2;
 
@@ -45,7 +46,7 @@ function displayValueToEtherValue(usdMode: boolean, displayValue: string, native
  */
 export const EtherInput = ({ value, name, placeholder, onChange, disabled }: CommonInputProps) => {
   const [transitoryDisplayValue, setTransitoryDisplayValue] = useState<string>();
-  const nativeCurrencyPrice = useGlobalState(state => state.nativeCurrencyPrice);
+  const nativeCurrencyPrice = 1;
   const [usdMode, setUSDMode] = useState(false);
 
   // The displayValue is derived from the ether value that is controlled outside of the component
