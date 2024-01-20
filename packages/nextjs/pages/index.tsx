@@ -5,7 +5,7 @@ import { useAccount, useBalance } from "wagmi";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import BuildersInfo from "~~/components/BuildersInfo";
 import { MetaHeader } from "~~/components/MetaHeader";
-import { Address, Balance, EtherInput, InputBase } from "~~/components/scaffold-eth";
+import { Address, Balance, EtherInput, InputBase, SIGNED_NUMBER_REGEX } from "~~/components/scaffold-eth";
 import { useDeployedContractInfo, useScaffoldContractWrite, useTransactor } from "~~/hooks/scaffold-eth";
 import { AaveData, fetchAaveDetails } from "~~/utils/aave";
 import { notification } from "~~/utils/scaffold-eth";
@@ -29,6 +29,14 @@ const Home: NextPage = () => {
     address: streamContract?.address,
     token: "0xc4bF5CbDaBE595361438F8c6a187bDc330539c60",
   });
+
+  const handleChangeNumber = (newValue: string) => {
+    if (newValue && !SIGNED_NUMBER_REGEX.test(newValue)) {
+      return;
+    }
+
+    setAmount(newValue);
+  };
 
   const { writeAsync: doWithdraw } = useScaffoldContractWrite({
     contractName: "GhoFundStreams",
@@ -244,7 +252,12 @@ const Home: NextPage = () => {
           <div className="space-y-3">
             <div className="flex flex-col gap-6">
               <InputBase value={reason} placeholder="Reason for withdrawal" onChange={value => setReason(value)} />
-              <EtherInput value={amount} onChange={value => setAmount(value)} />
+              <InputBase
+                value={amount}
+                onChange={handleChangeNumber}
+                placeholder="Withdraw amount in $"
+                prefix={<span className="pl-4 -mr-2 text-accent self-center">$</span>}
+              />
               <button className="btn btn-primary btn-md" onClick={() => doWithdraw()}>
                 Withdraw
               </button>

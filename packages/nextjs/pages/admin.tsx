@@ -6,7 +6,7 @@ import { mainnet, useAccount, useBalance } from "wagmi";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import BuildersInfo from "~~/components/BuildersInfo";
 import { MetaHeader } from "~~/components/MetaHeader";
-import { Address, EtherInput, InputBase } from "~~/components/scaffold-eth";
+import { Address, EtherInput, InputBase, SIGNED_NUMBER_REGEX } from "~~/components/scaffold-eth";
 import { useDeployedContractInfo, useScaffoldContractWrite, useTransactor } from "~~/hooks/scaffold-eth";
 import { AaveData, fetchAaveDetails } from "~~/utils/aave";
 import { notification } from "~~/utils/scaffold-eth";
@@ -88,6 +88,14 @@ const Admin: NextPage = () => {
     // create an array of wallets length each value with amount value
     args: [wallets, [...Array.from({ length: wallets?.length }, () => (amount ? parseEther(amount) : 0n))]],
   });
+
+  const handleChangeNumber = (newValue: string) => {
+    if (newValue && !SIGNED_NUMBER_REGEX.test(newValue)) {
+      return;
+    }
+
+    setAmount(newValue);
+  };
 
   // -----------------------------------------------------
   // Above code is for handling add builders input fileds
@@ -391,7 +399,12 @@ const Admin: NextPage = () => {
                   autoComplete="off"
                 />
               </div>
-              <EtherInput value={amount} onChange={value => setAmount(value)} placeholder="Stream amount" />
+              <InputBase
+                value={amount}
+                onChange={handleChangeNumber}
+                placeholder="GHO stream amount"
+                prefix={<span className="pl-4 -mr-2 text-accent self-center">$</span>}
+              />
               <button
                 disabled={wallets.length === 0 || amount === "0" || amount.length === 0}
                 className="btn btn-primary btn-md"
@@ -426,7 +439,12 @@ const Admin: NextPage = () => {
           </label>
           <div className="space-y-3">
             <div className="flex flex-col gap-6">
-              <EtherInput value={amount} onChange={value => setAmount(value)} placeholder="Borrow amount" />
+              <InputBase
+                value={amount}
+                onChange={value => setAmount(value)}
+                placeholder="Borrow amount"
+                prefix={<span className="pl-4 -mr-2 text-accent self-center">$</span>}
+              />
               <button
                 className="btn btn-primary btn-md"
                 onClick={async () => {
