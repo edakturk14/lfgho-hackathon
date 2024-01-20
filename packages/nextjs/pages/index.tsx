@@ -69,7 +69,7 @@ const Home: NextPage = () => {
       <MetaHeader />
       <div className="flex flex-col flex-grow p-4 space-y-4">
         {/* DAO Contract details */}
-        <div className="flex space-x-3">
+        <div className="flex flex-col md:flex-row gap-3">
           {/* DAO Contract details */}
           <div className="flex flex-col shadow-center shadow-secondary  rounded-lg p-3 border-4 border-secondary">
             <h1 className="text-xl text-primary font-bold">Details</h1>
@@ -96,7 +96,7 @@ const Home: NextPage = () => {
           {/* Status */}
           <div className="flex flex-col shadow-center shadow-secondary  rounded-lg p-3 border-4 border-secondary">
             <h1 className="text-xl text-primary font-bold">Status</h1>
-            <div className="flex flex-row space-x-3">
+            <div className="flex flex-col md:flex-row gap-3">
               <div className="flex flex-col">
                 <p className="font-bold m-0 text-secondary">
                   Health Factor
@@ -203,7 +203,7 @@ const Home: NextPage = () => {
           {/* Actions */}
           <div className="flex flex-col shadow-center shadow-secondary  rounded-lg p-3 border-4 border-secondary">
             <h1 className="text-xl text-primary font-bold">Actions</h1>
-            <div className="flex flex-row space-x-5">
+            <div className="flex flex-col md:flex-row gap-5">
               <div className="flex flex-col space-y-1">
                 <p className="font-bold m-0 text-secondary">
                   Donate
