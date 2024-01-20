@@ -19,7 +19,7 @@ export const menuLinks: HeaderMenuLink[] = [
   },
   {
     label: "Admin",
-    href: "/debug",
+    href: "/admin",
     icon: <UserIcon className="h-4 w-4" />,
   },
 ];

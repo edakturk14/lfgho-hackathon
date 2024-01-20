@@ -68,39 +68,47 @@ const BuildersInfo = () => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-6">
-            {sortedBuilders?.map((builderData: any) => {
-              if (builderData.GHOcap === 0n) return;
-              const cap = formatEther(builderData.GHOcap || 0n);
-              const unlocked = formatEther(builderData.unlockedGHOAmount || 0n);
-              const percentage = Math.floor((parseFloat(unlocked) / parseFloat(cap)) * 100);
-              return (
-                <div className="flex flex-col md:flex-row gap-2 md:gap-6" key={builderData.builderAddress}>
-                  <div className="flex flex-col md:items-center">
-                    <div>
-                      Ξ {parseFloat(unlocked).toFixed(4)} / {cap}
+          <>
+            {(!sortedBuilders || sortedBuilders?.length === 0) && (
+              <div className="m-4">
+                <div className="text-5xl mb-2">👻</div>
+                <div className="m-0 flex items-end space-x-1 text-lg font-bold text-primary">No Builders yet</div>
+              </div>
+            )}
+            <div className="flex flex-col gap-6">
+              {sortedBuilders?.map((builderData: any) => {
+                if (builderData.GHOcap === 0n) return;
+                const cap = formatEther(builderData.GHOcap || 0n);
+                const unlocked = formatEther(builderData.unlockedGHOAmount || 0n);
+                const percentage = Math.floor((parseFloat(unlocked) / parseFloat(cap)) * 100);
+                return (
+                  <div className="flex flex-col md:flex-row gap-2 md:gap-6" key={builderData.builderAddress}>
+                    <div className="flex flex-col md:items-center">
+                      <div>
+                        Ξ {parseFloat(unlocked).toFixed(4)} / {cap}
+                      </div>
+                      <progress
+                        className="progress w-56 progress-primary bg-gray-300"
+                        value={percentage}
+                        max="100"
+                      ></progress>
                     </div>
-                    <progress
-                      className="progress w-56 progress-primary bg-gray-300"
-                      value={percentage}
-                      max="100"
-                    ></progress>
+                    <div className="md:w-1/2 flex">
+                      <label
+                        htmlFor="withdraw-events-modal"
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setSelectedAddress(builderData.builderAddress);
+                        }}
+                      >
+                        <Address address={builderData.builderAddress} disableAddressLink={true} />
+                      </label>
+                    </div>
                   </div>
-                  <div className="md:w-1/2 flex">
-                    <label
-                      htmlFor="withdraw-events-modal"
-                      className="cursor-pointer"
-                      onClick={() => {
-                        setSelectedAddress(builderData.builderAddress);
-                      }}
-                    >
-                      <Address address={builderData.builderAddress} disableAddressLink={true} />
-                    </label>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
 
@@ -117,9 +125,10 @@ const BuildersInfo = () => {
           </div>
         ) : (
           <>
-            {sortedWithdrawEvents?.length === 0 && (
-              <div className="my-2">
-                <p>No contributions yet!</p>
+            {(!sortedWithdrawEvents || sortedWithdrawEvents.length === 0) && (
+              <div className="m-4">
+                <div className="text-5xl mb-2">👻</div>
+                <div className="m-0 flex items-end space-x-1 text-lg font-bold text-primary">No contributions yet!</div>
               </div>
             )}
             {sortedWithdrawEvents?.map((event: any) => {

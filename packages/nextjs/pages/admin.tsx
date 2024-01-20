@@ -6,7 +6,7 @@ import { mainnet, useAccount, useBalance } from "wagmi";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import BuildersInfo from "~~/components/BuildersInfo";
 import { MetaHeader } from "~~/components/MetaHeader";
-import { Address, Balance, EtherInput, InputBase } from "~~/components/scaffold-eth";
+import { Address, EtherInput, InputBase } from "~~/components/scaffold-eth";
 import { useDeployedContractInfo, useScaffoldContractWrite, useTransactor } from "~~/hooks/scaffold-eth";
 import { AaveData, fetchAaveDetails } from "~~/utils/aave";
 import { notification } from "~~/utils/scaffold-eth";
@@ -89,13 +89,10 @@ const Admin: NextPage = () => {
     args: [wallets, [...Array.from({ length: wallets?.length }, () => (amount ? parseEther(amount) : 0n))]],
   });
 
-  // ------------------
-  //
-  //
-  // BSSSSSSSSSSSSSSSSS
-  //
-  //
-  // -----------------------
+  // -----------------------------------------------------
+  // Above code is for handling add builders input fileds
+  // -----------------------------------------------------
+
   const [reason, setReason] = useState("");
   const [aaveDetails, setAaveDetails] = useState<AaveData | undefined>();
   const [aaveDetailsLoading, setAaveDetailsLoading] = useState(true);
@@ -160,8 +157,6 @@ const Admin: NextPage = () => {
                 <div className="flex flex-col items-center">
                   <Address address={streamContract?.address} />
                 </div>{" "}
-                /
-                <Balance address={streamContract?.address} className="text-lg" />
               </div>
             </div>
           </div>
