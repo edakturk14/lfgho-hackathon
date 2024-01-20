@@ -60,10 +60,6 @@ const Home: NextPage = () => {
     <>
       <MetaHeader />
       <div className="flex flex-col flex-grow p-4 space-y-4">
-        {/* Welcome*/}
-        <div>
-          <h1 className="text-3xl text-primary font-bold underline underline-offset-8">Welcome to DAO !</h1>
-        </div>
         {/* DAO Contract details */}
         <div className="flex space-x-3">
           {/* DAO Contract details */}
