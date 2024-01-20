@@ -179,7 +179,7 @@ const BuildersInfo = () => {
                         {new Date(parseInt(event.block.timestamp.toString()) * 1000).toISOString().split("T")[0]}
                       </div>
                       <div>
-                        <span className="font-bold">Amount: </span>Ξ {formatEther(event.args.amount.toString())}
+                        <span className="font-bold">Amount: </span>Ξ {formatEther(event.args.GHOamount.toString())}
                       </div>
                       <div>{event.args.reason}</div>
                       <hr className="my-8" />
